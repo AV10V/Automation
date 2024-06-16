@@ -1,0 +1,66 @@
+<?php
+
+// Set the URL of the API you want to fetch data from
+$apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+
+// Function to fetch data from API
+function fetchDataFromApi($url) {
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    // Execute cURL session and get the response
+    $response = curl_exec($ch);
+
+    // Check if any error occurred
+    if (curl_errno($ch)) {
+        echo 'Error:' . curl_error($ch);
+        return false;
+    }
+
+    // Close cURL session
+    curl_close($ch);
+
+    return $response;
+}
+
+// Function to save data to a file
+function saveDataToFile($data, $filename) {
+    // Open file for writing
+    $file = fopen($filename, 'w');
+
+    // Check if file opened successfully
+    if ($file === false) {
+        echo 'Error opening file for writing';
+        return false;
+    }
+
+    // Write data to file
+    fwrite($file, $data);
+
+    // Close file
+    fclose($file);
+
+    return true;
+}
+
+// Fetch data from API
+$data = fetchDataFromApi($apiUrl);
+
+// Check if data fetched successfully
+if ($data !== false) {
+    // Save data to a file
+    $filename = 'data.json';
+    if (saveDataToFile($data, $filename)) {
+        echo 'Data successfully saved to ' . $filename;
+    } else {
+        echo 'Error saving data to file';
+    }
+} else {
+    echo 'Error fetching data from API';
+}
+
+?>
